@@ -1,0 +1,25 @@
+# Build artifacts
+build*/
+*.o
+*.a
+*.so
+*.dylib
+/maze
+/main
+*.dSYM/
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Serena
+.serena/
+
+# Claude
+.claude/
