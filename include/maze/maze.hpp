@@ -5,6 +5,7 @@
 #include <concepts>
 #include <vector>
 #include <initializer_list>
+#include <random>
 
 #include "core/cell.hpp"
 #include "core/graph_cell.hpp"
@@ -17,7 +18,15 @@ using Glyphs = std::vector<char>;
 enum class Algorithm {
     BFS,
     DFS,
-    Dijkstra
+    Dijkstra,
+    AStar,
+    GreedyBestFirst
+};
+
+enum class GenerationAlgorithm {
+    RecursiveBacktracker,
+    Prim,
+    Kruskal
 };
 
 template <GraphCell G>
@@ -31,8 +40,13 @@ public:
         float wall_density = 0.3f);
     void generateRandom(std::initializer_list<G> cells,
         float wall_density = 0.3f);
-    bool solve(Algorithm algorithm,
+    void generate(GenerationAlgorithm algorithm,
+        const G& wall, const G& passage);
+    Path findPath(Algorithm algorithm,
         Cell start = {0, 0}, Cell dest = {0, 0});
+    bool solve(Algorithm algorithm,
+        Cell start = {0, 0}, Cell dest = {0, 0},
+        bool visualize = true);
 
     template <GraphCell T>
     friend std::ostream& operator<<(std::ostream& os,
@@ -51,6 +65,15 @@ private:
     Path bfs(Cell start, Cell dest);
     Path dfs(Cell start, Cell dest);
     Path dijkstra(Cell start, Cell dest);
+    Path a_star(Cell start, Cell dest);
+    Path greedy_best_first(Cell start, Cell dest);
+    void fill(const G& cell);
+    void generate_recursive_backtracker(const G& wall, const G& passage,
+        std::mt19937& rng);
+    void generate_prim(const G& wall, const G& passage,
+        std::mt19937& rng);
+    void generate_kruskal(const G& wall, const G& passage,
+        std::mt19937& rng);
 
     void displayPath(const Path& path, Cell start, Cell dest, 
         const uint16_t step_ms = 100);
@@ -60,3 +83,4 @@ using Maze = GenericMaze<CellMetaData>;
 
 #include "maze.tpp"
 #include "algorithms/pathfinding.tpp"
+#include "algorithms/generation.tpp"

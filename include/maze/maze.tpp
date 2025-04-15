@@ -92,21 +92,42 @@ void GenericMaze<G>::generateRandom(std::initializer_list<G> cells, float wall_d
 }
 
 template <GraphCell G>
-bool GenericMaze<G>::solve(Algorithm algo, Cell start, Cell dest) {
+Path GenericMaze<G>::findPath(Algorithm algo, Cell start, Cell dest) {
     // Use default destination if sentinel value is passed
     if (start == Cell{0, 0} && dest == Cell{0, 0}) {
         dest = {height - 1, width - 1};
     }
 
-    Path result = [&] {
+    if (start == dest) {
+        return {};
+    }
+
+    return [&] {
         switch (algo) {
             case Algorithm::BFS:      return bfs(start, dest);
             case Algorithm::DFS:      return dfs(start, dest);
             case Algorithm::Dijkstra: return dijkstra(start, dest);
+            case Algorithm::AStar:    return a_star(start, dest);
+            case Algorithm::GreedyBestFirst:
+                return greedy_best_first(start, dest);
         }
     }();
+}
 
-    if (!result.empty()) displayPath(result, start, dest);
+template <GraphCell G>
+bool GenericMaze<G>::solve(Algorithm algo, Cell start, Cell dest, bool visualize) {
+    // Use default destination if sentinel value is passed
+    if (start == Cell{0, 0} && dest == Cell{0, 0}) {
+        dest = {height - 1, width - 1};
+    }
+
+    if (start == dest) {
+        return true;
+    }
+
+    Path result = findPath(algo, start, dest);
+
+    if (!result.empty() && visualize) displayPath(result, start, dest);
     return !result.empty();
 }
 
