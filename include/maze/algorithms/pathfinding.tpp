@@ -8,6 +8,20 @@
 #include <cstddef>
 #include <cstdint>
 #include <algorithm>
+#include <vector>
+#include <cmath>
+
+inline float manhattan_distance(const Cell& a, const Cell& b) {
+    std::size_t dr = (a.row > b.row) ? (a.row - b.row) : (b.row - a.row);
+    std::size_t dc = (a.col > b.col) ? (a.col - b.col) : (b.col - a.col);
+    return static_cast<float>(dr + dc);
+}
+
+inline float euclidean_distance(const Cell& a, const Cell& b) {
+    float dr = static_cast<float>(a.row > b.row ? (a.row - b.row) : (b.row - a.row));
+    float dc = static_cast<float>(a.col > b.col ? (a.col - b.col) : (b.col - a.col));
+    return std::sqrt(dr * dr + dc * dc);
+}
 
 template <GraphCell G>
 Path GenericMaze<G>::bfs(Cell start, Cell dest) {
@@ -97,6 +111,148 @@ Path GenericMaze<G>::dfs(Cell start, Cell dest) {
 
 template <GraphCell G>
 Path GenericMaze<G>::dijkstra(Cell start, Cell dest) {
-    // TODO: Implement Dijkstra pathfinding
+    if (start == dest) return {};
+
+    DirectionMap dir_map(width, height);
+    std::unordered_map<Cell, float> dist;
+
+    // Min-heap: (distance, cell)
+    using PQEntry = std::pair<float, Cell>;
+    std::priority_queue<PQEntry, std::vector<PQEntry>, std::greater<>> pq;
+
+    dist[start] = 0.0f;
+    pq.emplace(0.0f, start);
+
+    while (!pq.empty()) {
+        auto [d, cell] = pq.top();
+        pq.pop();
+
+        // Skip stale entries
+        if (dist.contains(cell) && d > dist[cell]) continue;
+
+        if (cell == dest) {
+            // Reconstruct path
+            Path result;
+            Cell current = dest;
+            while (!(current == start)) {
+                result.push_back(dir_map[current]);
+                current.move(reverse(dir_map[current]));
+            }
+            std::reverse(result.begin(), result.end());
+            return result;
+        }
+
+        for (std::uint8_t di = 0; di < Direction::COUNT; ++di) {
+            Direction dir = static_cast<Direction>(di);
+            if (cell.hasDir(dir, width, height)) {
+                Cell neighbor = cell.toward(dir);
+                const G& neighbor_data = at(neighbor);
+                if (neighbor_data.wall) continue;
+
+                float new_dist = dist[cell] + neighbor_data.weight;
+                if (!dist.contains(neighbor) || new_dist < dist[neighbor]) {
+                    dist[neighbor] = new_dist;
+                    dir_map[neighbor] = dir;
+                    pq.emplace(new_dist, neighbor);
+                }
+            }
+        }
+    }
+    return {};
+}
+
+template <GraphCell G>
+Path GenericMaze<G>::a_star(Cell start, Cell dest) {
+    if (start == dest) return {};
+
+    DirectionMap dir_map(width, height);
+    std::unordered_map<Cell, float> g_score;
+
+    using PQEntry = std::pair<float, Cell>;
+    std::priority_queue<PQEntry, std::vector<PQEntry>, std::greater<>> pq;
+
+    g_score[start] = 0.0f;
+    pq.emplace(manhattan_distance(start, dest), start);
+
+    while (!pq.empty()) {
+        auto [f_score, cell] = pq.top();
+        pq.pop();
+
+        if (cell == dest) {
+            Path result;
+            Cell current = dest;
+            while (!(current == start)) {
+                result.push_back(dir_map[current]);
+                current.move(reverse(dir_map[current]));
+            }
+            std::reverse(result.begin(), result.end());
+            return result;
+        }
+
+        if (g_score.contains(cell)) {
+            float expected_f = g_score[cell] + manhattan_distance(cell, dest);
+            if (f_score > expected_f) continue;
+        }
+
+        for (std::uint8_t di = 0; di < Direction::COUNT; ++di) {
+            Direction dir = static_cast<Direction>(di);
+            if (!cell.hasDir(dir, width, height)) continue;
+
+            Cell neighbor = cell.toward(dir);
+            const G& neighbor_data = at(neighbor);
+            if (neighbor_data.wall) continue;
+
+            float tentative_g = g_score[cell] + neighbor_data.weight;
+            if (!g_score.contains(neighbor) || tentative_g < g_score[neighbor]) {
+                g_score[neighbor] = tentative_g;
+                dir_map[neighbor] = dir;
+                float f = tentative_g + manhattan_distance(neighbor, dest);
+                pq.emplace(f, neighbor);
+            }
+        }
+    }
+    return {};
+}
+
+template <GraphCell G>
+Path GenericMaze<G>::greedy_best_first(Cell start, Cell dest) {
+    if (start == dest) return {};
+
+    DirectionMap dir_map(width, height);
+    std::unordered_set<Cell> visited;
+
+    using PQEntry = std::pair<float, Cell>;
+    std::priority_queue<PQEntry, std::vector<PQEntry>, std::greater<>> pq;
+
+    visited.insert(start);
+    pq.emplace(manhattan_distance(start, dest), start);
+
+    while (!pq.empty()) {
+        auto [priority, cell] = pq.top();
+        pq.pop();
+
+        if (cell == dest) {
+            Path result;
+            Cell current = dest;
+            while (!(current == start)) {
+                result.push_back(dir_map[current]);
+                current.move(reverse(dir_map[current]));
+            }
+            std::reverse(result.begin(), result.end());
+            return result;
+        }
+
+        for (std::uint8_t di = 0; di < Direction::COUNT; ++di) {
+            Direction dir = static_cast<Direction>(di);
+            if (!cell.hasDir(dir, width, height)) continue;
+
+            Cell neighbor = cell.toward(dir);
+            if (at(neighbor).wall || visited.contains(neighbor)) continue;
+
+            visited.insert(neighbor);
+            dir_map[neighbor] = dir;
+            pq.emplace(manhattan_distance(neighbor, dest), neighbor);
+        }
+    }
     return {};
 }
