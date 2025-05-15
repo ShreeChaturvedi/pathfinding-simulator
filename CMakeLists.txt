@@ -66,6 +66,7 @@ if(MAZE_BUILD_TESTS)
         tests/test_cell.cpp
         tests/test_pathfinding.cpp
         tests/test_maze.cpp
+        tests/test_generation.cpp
     )
     target_link_libraries(maze_tests PRIVATE maze_lib Catch2::Catch2WithMain)
 
