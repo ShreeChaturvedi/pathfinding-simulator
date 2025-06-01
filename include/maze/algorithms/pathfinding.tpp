@@ -24,7 +24,7 @@ inline float euclidean_distance(const Cell& a, const Cell& b) {
 }
 
 template <GraphCell G>
-Path GenericMaze<G>::bfs(Cell start, Cell dest) {
+Path GenericMaze<G>::bfs(Cell start, Cell dest, ExploreCallback on_explore) {
     DirectionMap dir_map(width, height);
     std::unordered_set<Cell> visited;
     std::queue<Cell> queue;
@@ -40,6 +40,16 @@ Path GenericMaze<G>::bfs(Cell start, Cell dest) {
         while (size-- > 0) {
             Cell cell = queue.front();
             queue.pop();
+            if (on_explore) {
+                std::vector<Cell> frontier;
+                frontier.reserve(queue.size());
+                auto temp = queue;
+                while (!temp.empty()) {
+                    frontier.push_back(temp.front());
+                    temp.pop();
+                }
+                on_explore(cell, frontier, visited);
+            }
             if (cell == dest) {
                 Path result(depth - 1);
                 int i = depth - 2;
@@ -67,7 +77,7 @@ Path GenericMaze<G>::bfs(Cell start, Cell dest) {
 }
 
 template <GraphCell G>
-Path GenericMaze<G>::dfs(Cell start, Cell dest) {
+Path GenericMaze<G>::dfs(Cell start, Cell dest, ExploreCallback on_explore) {
     if (start == dest) return {};
 
     DirectionMap dir_map(width, height);
@@ -80,6 +90,16 @@ Path GenericMaze<G>::dfs(Cell start, Cell dest) {
     while (!stack.empty()) {
         Cell cell = stack.top();
         stack.pop();
+        if (on_explore) {
+            std::vector<Cell> frontier;
+            frontier.reserve(stack.size());
+            auto temp = stack;
+            while (!temp.empty()) {
+                frontier.push_back(temp.top());
+                temp.pop();
+            }
+            on_explore(cell, frontier, visited);
+        }
 
         for (std::uint8_t d = 0; d < Direction::COUNT; ++d) {
             Direction dir = static_cast<Direction>(d);
@@ -110,11 +130,12 @@ Path GenericMaze<G>::dfs(Cell start, Cell dest) {
 }
 
 template <GraphCell G>
-Path GenericMaze<G>::dijkstra(Cell start, Cell dest) {
+Path GenericMaze<G>::dijkstra(Cell start, Cell dest, ExploreCallback on_explore) {
     if (start == dest) return {};
 
     DirectionMap dir_map(width, height);
     std::unordered_map<Cell, float> dist;
+    std::unordered_set<Cell> visited;
 
     // Min-heap: (distance, cell)
     using PQEntry = std::pair<float, Cell>;
@@ -129,6 +150,18 @@ Path GenericMaze<G>::dijkstra(Cell start, Cell dest) {
 
         // Skip stale entries
         if (dist.contains(cell) && d > dist[cell]) continue;
+        visited.insert(cell);
+
+        if (on_explore) {
+            std::vector<Cell> frontier;
+            frontier.reserve(pq.size());
+            auto temp = pq;
+            while (!temp.empty()) {
+                frontier.push_back(temp.top().second);
+                temp.pop();
+            }
+            on_explore(cell, frontier, visited);
+        }
 
         if (cell == dest) {
             // Reconstruct path
@@ -162,11 +195,12 @@ Path GenericMaze<G>::dijkstra(Cell start, Cell dest) {
 }
 
 template <GraphCell G>
-Path GenericMaze<G>::a_star(Cell start, Cell dest) {
+Path GenericMaze<G>::a_star(Cell start, Cell dest, ExploreCallback on_explore) {
     if (start == dest) return {};
 
     DirectionMap dir_map(width, height);
     std::unordered_map<Cell, float> g_score;
+    std::unordered_set<Cell> visited;
 
     using PQEntry = std::pair<float, Cell>;
     std::priority_queue<PQEntry, std::vector<PQEntry>, std::greater<>> pq;
@@ -193,6 +227,18 @@ Path GenericMaze<G>::a_star(Cell start, Cell dest) {
             float expected_f = g_score[cell] + manhattan_distance(cell, dest);
             if (f_score > expected_f) continue;
         }
+        visited.insert(cell);
+
+        if (on_explore) {
+            std::vector<Cell> frontier;
+            frontier.reserve(pq.size());
+            auto temp = pq;
+            while (!temp.empty()) {
+                frontier.push_back(temp.top().second);
+                temp.pop();
+            }
+            on_explore(cell, frontier, visited);
+        }
 
         for (std::uint8_t di = 0; di < Direction::COUNT; ++di) {
             Direction dir = static_cast<Direction>(di);
@@ -215,7 +261,7 @@ Path GenericMaze<G>::a_star(Cell start, Cell dest) {
 }
 
 template <GraphCell G>
-Path GenericMaze<G>::greedy_best_first(Cell start, Cell dest) {
+Path GenericMaze<G>::greedy_best_first(Cell start, Cell dest, ExploreCallback on_explore) {
     if (start == dest) return {};
 
     DirectionMap dir_map(width, height);
@@ -230,6 +276,17 @@ Path GenericMaze<G>::greedy_best_first(Cell start, Cell dest) {
     while (!pq.empty()) {
         auto [priority, cell] = pq.top();
         pq.pop();
+
+        if (on_explore) {
+            std::vector<Cell> frontier;
+            frontier.reserve(pq.size());
+            auto temp = pq;
+            while (!temp.empty()) {
+                frontier.push_back(temp.top().second);
+                temp.pop();
+            }
+            on_explore(cell, frontier, visited);
+        }
 
         if (cell == dest) {
             Path result;

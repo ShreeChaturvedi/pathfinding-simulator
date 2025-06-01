@@ -6,6 +6,8 @@
 #include <vector>
 #include <initializer_list>
 #include <random>
+#include <functional>
+#include <unordered_set>
 
 #include "core/cell.hpp"
 #include "core/graph_cell.hpp"
@@ -14,6 +16,10 @@
 
 using Path = std::vector<Direction>;
 using Glyphs = std::vector<char>;
+using ExploreCallback = std::function<void(
+    const Cell&,
+    const std::vector<Cell>&,
+    const std::unordered_set<Cell>&)>;
 
 enum class Algorithm {
     BFS,
@@ -43,7 +49,8 @@ public:
     void generate(GenerationAlgorithm algorithm,
         const G& wall, const G& passage);
     Path findPath(Algorithm algorithm,
-        Cell start = {0, 0}, Cell dest = {0, 0});
+        Cell start = {0, 0}, Cell dest = {0, 0},
+        ExploreCallback on_explore = nullptr);
     bool solve(Algorithm algorithm,
         Cell start = {0, 0}, Cell dest = {0, 0},
         bool visualize = true);
@@ -62,11 +69,11 @@ private:
 
     const G& at(Cell cell) const;
 
-    Path bfs(Cell start, Cell dest);
-    Path dfs(Cell start, Cell dest);
-    Path dijkstra(Cell start, Cell dest);
-    Path a_star(Cell start, Cell dest);
-    Path greedy_best_first(Cell start, Cell dest);
+    Path bfs(Cell start, Cell dest, ExploreCallback on_explore);
+    Path dfs(Cell start, Cell dest, ExploreCallback on_explore);
+    Path dijkstra(Cell start, Cell dest, ExploreCallback on_explore);
+    Path a_star(Cell start, Cell dest, ExploreCallback on_explore);
+    Path greedy_best_first(Cell start, Cell dest, ExploreCallback on_explore);
     void fill(const G& cell);
     void generate_recursive_backtracker(const G& wall, const G& passage,
         std::mt19937& rng);
