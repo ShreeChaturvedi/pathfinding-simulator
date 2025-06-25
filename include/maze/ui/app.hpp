@@ -17,11 +17,15 @@
 
 namespace maze::ui {
 
+/// @brief FTXUI-based interactive maze visualizer.
 class MazeApp {
 public:
+    /// @brief Construct the app with the given maze dimensions.
     MazeApp(std::size_t width, std::size_t height);
+    /// @brief Ensure background worker threads are stopped.
     ~MazeApp();
 
+    /// @brief Run the interactive UI loop.
     void run();
 
 private:
