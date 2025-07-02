@@ -42,6 +42,7 @@ endif()
 # Main executable
 add_executable(maze
     src/main.cpp
+    src/ui/app.cpp
     src/cell.cpp
 )
 target_link_libraries(maze PRIVATE
