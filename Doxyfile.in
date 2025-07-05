@@ -1,0 +1,16 @@
+# Doxygen configuration (minimal, CMake overrides some values)
+
+PROJECT_NAME           = "maze"
+PROJECT_BRIEF          = "Interactive maze pathfinding visualizer"
+OUTPUT_DIRECTORY       = @CMAKE_CURRENT_SOURCE_DIR@/docs/doxygen
+INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/include
+RECURSIVE              = YES
+GENERATE_HTML          = YES
+GENERATE_MAN           = NO
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+QUIET                  = YES
+WARN_IF_UNDOCUMENTED   = YES
+WARN_NO_PARAMDOC       = YES
+FILE_PATTERNS          = *.hpp *.tpp
+USE_MDFILE_AS_MAINPAGE = @CMAKE_CURRENT_SOURCE_DIR@/README.md

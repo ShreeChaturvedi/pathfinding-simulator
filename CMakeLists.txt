@@ -79,14 +79,12 @@ endif()
 # Doxygen documentation
 find_package(Doxygen QUIET)
 if(DOXYGEN_FOUND)
-    set(DOXYGEN_GENERATE_HTML YES)
-    set(DOXYGEN_GENERATE_MAN NO)
-    set(DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/docs/doxygen)
-    set(DOXYGEN_EXTRACT_ALL YES)
-    set(DOXYGEN_EXTRACT_PRIVATE YES)
-
+    set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
+    set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
+    configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
     doxygen_add_docs(docs
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         COMMENT "Generating API documentation"
+        CONFIG_FILE ${DOXYGEN_OUT}
     )
 endif()
