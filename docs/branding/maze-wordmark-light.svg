@@ -1,0 +1,5 @@
+<svg width="640" height="160" viewBox="0 0 640 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="20" y="20" width="120" height="120" rx="16" stroke="#111827" stroke-width="8"/>
+  <path d="M44 44H116V72H88V116H44V88H72V60H44Z" stroke="#38BDF8" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="170" y="108" font-family="Fira Code, Menlo, monospace" font-size="72" fill="#111827" letter-spacing="6">MAZE</text>
+</svg>
