@@ -9,33 +9,27 @@ Type "./build/maze"
 Enter
 Sleep 600ms
 
-Key Tab
-Key ArrowDown
-Key ArrowDown
-Key Tab
+Tab
+Down 2
+Tab
 Sleep 400ms
 
-Key ArrowRight
-Key ArrowRight
-Key ArrowDown
-Key ArrowDown
-Key ArrowDown
+Right 2
+Down 3
 Sleep 300ms
 
-Key s
-Key ArrowRight
-Key ArrowRight
-Key ArrowDown
-Key ArrowDown
-Key d
+Type "s"
+Right 2
+Down 2
+Type "d"
 Sleep 300ms
 
-Key Space
+Space
 Sleep 4s
 
-Key r
+Type "r"
 Sleep 500ms
-Key Space
+Space
 Sleep 2s
 
-Key q
+Type "q"
