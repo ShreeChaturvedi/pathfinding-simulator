@@ -139,7 +139,12 @@ Path GenericMaze<G>::dijkstra(Cell start, Cell dest, ExploreCallback on_explore)
 
     // Min-heap: (distance, cell)
     using PQEntry = std::pair<float, Cell>;
-    std::priority_queue<PQEntry, std::vector<PQEntry>, std::greater<>> pq;
+    struct MinCost {
+        bool operator()(const PQEntry& a, const PQEntry& b) const {
+            return a.first > b.first;
+        }
+    };
+    std::priority_queue<PQEntry, std::vector<PQEntry>, MinCost> pq;
 
     dist[start] = 0.0f;
     pq.emplace(0.0f, start);
@@ -203,7 +208,12 @@ Path GenericMaze<G>::a_star(Cell start, Cell dest, ExploreCallback on_explore) {
     std::unordered_set<Cell> visited;
 
     using PQEntry = std::pair<float, Cell>;
-    std::priority_queue<PQEntry, std::vector<PQEntry>, std::greater<>> pq;
+    struct MinCost {
+        bool operator()(const PQEntry& a, const PQEntry& b) const {
+            return a.first > b.first;
+        }
+    };
+    std::priority_queue<PQEntry, std::vector<PQEntry>, MinCost> pq;
 
     g_score[start] = 0.0f;
     pq.emplace(manhattan_distance(start, dest), start);
@@ -268,7 +278,12 @@ Path GenericMaze<G>::greedy_best_first(Cell start, Cell dest, ExploreCallback on
     std::unordered_set<Cell> visited;
 
     using PQEntry = std::pair<float, Cell>;
-    std::priority_queue<PQEntry, std::vector<PQEntry>, std::greater<>> pq;
+    struct MinCost {
+        bool operator()(const PQEntry& a, const PQEntry& b) const {
+            return a.first > b.first;
+        }
+    };
+    std::priority_queue<PQEntry, std::vector<PQEntry>, MinCost> pq;
 
     visited.insert(start);
     pq.emplace(manhattan_distance(start, dest), start);

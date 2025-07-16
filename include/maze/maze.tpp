@@ -177,6 +177,7 @@ const G& GenericMaze<G>::at_unchecked(Cell cell) const {
 
 template <GraphCell G>
 void GenericMaze<G>::displayPath(const Path& path, Cell start, Cell dest, const uint16_t step_ms) {
+    (void)dest;
     std::cout << "\033[?1049h\033[?25l\033[H\033[2J";  // Alt screen + hide cursor + clear
     for (const Direction& dir : path) {
         std::cout << "\033[H";
