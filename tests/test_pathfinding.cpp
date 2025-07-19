@@ -98,7 +98,7 @@ TEST_CASE("Dijkstra pathfinding", "[pathfinding][dijkstra]") {
 
         Path path = maze.findPath(Algorithm::Dijkstra, {1, 0}, {1, 2});
         REQUIRE_FALSE(path.empty());
-        CHECK(path_cost(maze, {1, 0}, path) == Approx(4.0f));
+        CHECK(path_cost(maze, {1, 0}, path) == Catch::Approx(4.0f));
     }
 }
 
@@ -115,7 +115,7 @@ TEST_CASE("A* pathfinding", "[pathfinding][astar]") {
 
         Path path = maze.findPath(Algorithm::AStar, {1, 0}, {1, 2});
         REQUIRE_FALSE(path.empty());
-        CHECK(path_cost(maze, {1, 0}, path) == Approx(4.0f));
+        CHECK(path_cost(maze, {1, 0}, path) == Catch::Approx(4.0f));
     }
 
     SECTION("returns false when blocked") {
