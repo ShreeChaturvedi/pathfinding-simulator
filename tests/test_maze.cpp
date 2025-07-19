@@ -16,15 +16,15 @@ TEST_CASE("Maze bounds checking", "[maze]") {
     Maze maze(10, 10);
 
     SECTION("operator[] throws on out-of-bounds row") {
-        CHECK_THROWS_AS(maze[{10, 0}], std::out_of_range);
+        CHECK_THROWS_AS(maze[Cell{10, 0}], std::out_of_range);
     }
 
     SECTION("operator[] throws on out-of-bounds column") {
-        CHECK_THROWS_AS(maze[{0, 10}], std::out_of_range);
+        CHECK_THROWS_AS(maze[Cell{0, 10}], std::out_of_range);
     }
 
     SECTION("operator[] throws on both out-of-bounds") {
-        CHECK_THROWS_AS(maze[{15, 15}], std::out_of_range);
+        CHECK_THROWS_AS(maze[Cell{15, 15}], std::out_of_range);
     }
 
     SECTION("at_unchecked does not throw") {
