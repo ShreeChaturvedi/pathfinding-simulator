@@ -39,14 +39,19 @@ else()
     target_compile_options(maze_lib INTERFACE -Wall -Wextra -Wpedantic)
 endif()
 
+# Core library for non-header sources
+add_library(maze_core STATIC
+    src/cell.cpp
+)
+target_link_libraries(maze_core PUBLIC maze_lib)
+
 # Main executable
 add_executable(maze
     src/main.cpp
     src/ui/app.cpp
-    src/cell.cpp
 )
 target_link_libraries(maze PRIVATE
-    maze_lib
+    maze_core
     ftxui::screen
     ftxui::dom
     ftxui::component
@@ -69,7 +74,7 @@ if(MAZE_BUILD_TESTS)
         tests/test_maze.cpp
         tests/test_generation.cpp
     )
-    target_link_libraries(maze_tests PRIVATE maze_lib Catch2::Catch2WithMain)
+    target_link_libraries(maze_tests PRIVATE maze_core Catch2::Catch2WithMain)
 
     include(CTest)
     include(Catch)
