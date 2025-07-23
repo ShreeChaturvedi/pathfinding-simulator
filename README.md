@@ -7,7 +7,10 @@ Interactive maze pathfinding visualizer in modern C++ with real-time algorithm
 exploration, weighted terrain, and an FTXUI-driven terminal UI.
 
 ![CI](https://github.com/ShreeChaturvedi/pathfinding-simulator/actions/workflows/ci.yml/badge.svg)
+![Release](https://img.shields.io/github/v/release/ShreeChaturvedi/pathfinding-simulator)
 ![C++23](https://img.shields.io/badge/C%2B%2B-23-blue)
+![CMake](https://img.shields.io/badge/CMake-3.20%2B-informational)
+![FTXUI](https://img.shields.io/badge/FTXUI-5.0.0-1f6feb)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 ## Demo
@@ -63,12 +66,6 @@ ctest --preset default
 ## API Docs
 ```bash
 cmake --build --preset debug --target docs
-```
-
-## Record the Demo GIF (VHS)
-```bash
-brew install vhs
-vhs scripts/demo.tape
 ```
 
 ## License
