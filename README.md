@@ -9,8 +9,9 @@ exploration, weighted terrain, and an FTXUI-driven terminal UI.
 ![CI](https://github.com/ShreeChaturvedi/pathfinding-simulator/actions/workflows/ci.yml/badge.svg)
 ![Release](https://img.shields.io/github/v/release/ShreeChaturvedi/pathfinding-simulator)
 ![C++23](https://img.shields.io/badge/C%2B%2B-23-blue)
-![CMake](https://img.shields.io/badge/CMake-3.20%2B-informational)
 ![FTXUI](https://img.shields.io/badge/FTXUI-5.0.0-1f6feb)
+![Pathfinding](https://img.shields.io/badge/pathfinding-5%20algorithms-0ea5e9)
+![Generators](https://img.shields.io/badge/maze%20generators-3-22c55e)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 ## Demo
