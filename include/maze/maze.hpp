@@ -60,12 +60,19 @@ public:
     void generate(GenerationAlgorithm algorithm,
         const G& wall, const G& passage);
     /// @brief Compute a path without rendering.
-    Path findPath(Algorithm algorithm,
-        Cell start = {0, 0}, Cell dest = {0, 0},
+    /// Explicit dest is always a real coordinate (including {0, 0}).
+    /// start == dest yields an empty success path.
+    Path findPath(Algorithm algorithm, Cell start, Cell dest,
+        ExploreCallback on_explore = nullptr);
+    /// @brief Compute a path to the bottom-right corner without rendering.
+    Path findPath(Algorithm algorithm, Cell start = {0, 0},
         ExploreCallback on_explore = nullptr);
     /// @brief Compute a path and optionally visualize it.
-    bool solve(Algorithm algorithm,
-        Cell start = {0, 0}, Cell dest = {0, 0},
+    /// Explicit dest is always a real coordinate (including {0, 0}).
+    bool solve(Algorithm algorithm, Cell start, Cell dest,
+        bool visualize = true);
+    /// @brief Solve a path to the bottom-right corner.
+    bool solve(Algorithm algorithm, Cell start = {0, 0},
         bool visualize = true);
 
     template <GraphCell T>
