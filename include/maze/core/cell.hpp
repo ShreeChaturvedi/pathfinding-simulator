@@ -5,7 +5,7 @@
 
 #include "direction.hpp"
 
-/// @brief Grid coordinate for maze navigation.
+/// @brief Row/column grid coordinate for maze navigation.
 struct Cell {
     std::size_t row, col;
 
@@ -13,7 +13,7 @@ struct Cell {
     Cell toward(Direction dir) const;
     /// @brief Mutate this cell by moving in the given direction.
     void move(Direction dir);
-    /// @brief Check if a direction stays in bounds.
+    /// @brief True if moving in dir from this cell stays inside width x height bounds.
     bool hasDir(Direction dir, std::size_t width, std::size_t height) const;
 
     /// @brief Equality comparison for coordinates.
