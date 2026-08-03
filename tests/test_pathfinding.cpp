@@ -56,6 +56,39 @@ TEST_CASE("BFS pathfinding", "[pathfinding][bfs]") {
         bool found = maze.solve(Algorithm::BFS, {2, 2}, {2, 2}, false);
         CHECK(found);
     }
+
+    SECTION("handles start equals destination at origin") {
+        auto maze = create_open_maze(5, 5);
+        // Explicit {0,0}->{0,0} must not be rewritten to bottom-right.
+        bool found = maze.solve(Algorithm::BFS, {0, 0}, Cell{0, 0}, false);
+        CHECK(found);
+        Path path = maze.findPath(Algorithm::BFS, {0, 0}, Cell{0, 0});
+        CHECK(path.empty());
+    }
+}
+
+TEST_CASE("findPath default destination", "[pathfinding][defaults]") {
+    SECTION("omitted dest defaults to bottom-right") {
+        auto maze = create_open_maze(5, 5);
+        Path path = maze.findPath(Algorithm::BFS, {0, 0});
+        REQUIRE_FALSE(path.empty());
+        // 5x5 open maze: shortest path length from (0,0) to (4,4) is 8.
+        CHECK(path.size() == 8);
+    }
+
+    SECTION("solve with omitted dest reaches bottom-right") {
+        auto maze = create_open_maze(4, 4);
+        CHECK(maze.solve(Algorithm::BFS, {0, 0}, false));
+    }
+
+    SECTION("explicit origin dest is not treated as default") {
+        auto maze = create_open_maze(3, 3);
+        Path path = maze.findPath(Algorithm::BFS, {1, 1}, Cell{0, 0});
+        REQUIRE_FALSE(path.empty());
+        Cell end{1, 1};
+        for (Direction dir : path) end.move(dir);
+        CHECK(end == Cell{0, 0});
+    }
 }
 
 TEST_CASE("DFS pathfinding", "[pathfinding][dfs]") {
