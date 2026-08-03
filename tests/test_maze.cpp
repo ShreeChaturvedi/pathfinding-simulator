@@ -12,6 +12,46 @@ TEST_CASE("Maze construction", "[maze]") {
     }
 }
 
+TEST_CASE("Maze move semantics", "[maze][move]") {
+    CellMetaData marker{false, 'X', Color::green, 2.5f};
+    CellMetaData other{false, '.', Color::white, 1.0f};
+
+    SECTION("move construction transfers ownership") {
+        Maze original(4, 3);
+        original[{1, 2}] = marker;
+
+        Maze moved(std::move(original));
+        CHECK(moved[{1, 2}].glyph == 'X');
+        CHECK(moved[{1, 2}].weight == 2.5f);
+        // Moved-from maze is empty; accessing it would be out of bounds / null.
+        // Just ensure the moved maze remains usable for further writes.
+        moved[{0, 0}] = other;
+        CHECK(moved[{0, 0}].glyph == '.');
+    }
+
+    SECTION("move assignment transfers ownership") {
+        Maze source(5, 5);
+        source[{3, 3}] = marker;
+
+        Maze target(2, 2);
+        target[{0, 0}] = other;
+        target = std::move(source);
+
+        CHECK(target[{3, 3}].glyph == 'X');
+        CHECK(target[{3, 3}].weight == 2.5f);
+        target[{4, 4}] = other;
+        CHECK(target[{4, 4}].glyph == '.');
+    }
+
+    SECTION("self move-assignment is a no-op") {
+        Maze maze(3, 3);
+        maze[{1, 1}] = marker;
+        Maze& ref = maze;
+        maze = std::move(ref);
+        CHECK(maze[{1, 1}].glyph == 'X');
+    }
+}
+
 TEST_CASE("Maze bounds checking", "[maze]") {
     Maze maze(10, 10);
 

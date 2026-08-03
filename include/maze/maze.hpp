@@ -50,6 +50,15 @@ public:
     /// @brief Release owned grid memory.
     ~GenericMaze();
 
+    /// @brief Non-copyable: owns a raw G** grid (double-free risk on shallow copy).
+    GenericMaze(const GenericMaze&) = delete;
+    GenericMaze& operator=(const GenericMaze&) = delete;
+
+    /// @brief Move constructor. Transfers grid ownership.
+    GenericMaze(GenericMaze&& other) noexcept;
+    /// @brief Move assignment. Releases current grid, then transfers ownership.
+    GenericMaze& operator=(GenericMaze&& other) noexcept;
+
     /// @brief Generate a random maze from a weighted cell pool.
     void generateRandom(std::vector<G>& cells,
         float wall_density = 0.3f);
@@ -80,7 +89,7 @@ public:
     const G& at_unchecked(Cell cell) const;
 
 private:
-    const std::size_t width, height;
+    std::size_t width, height;
     G** grid;
 
     /// @brief Bounds-checked access to a grid cell (const).
