@@ -21,10 +21,39 @@ GenericMaze<G>::GenericMaze(std::size_t width, std::size_t height)
 
 template <GraphCell G>
 GenericMaze<G>::~GenericMaze() {
-    for (std::size_t row = 0; row < height; ++row) {
-        delete[] grid[row];
+    if (grid) {
+        for (std::size_t row = 0; row < height; ++row) {
+            delete[] grid[row];
+        }
+        delete[] grid;
     }
-    delete[] grid;
+}
+
+template <GraphCell G>
+GenericMaze<G>::GenericMaze(GenericMaze&& other) noexcept
+    : width(other.width), height(other.height), grid(other.grid) {
+    other.grid = nullptr;
+    other.width = 0;
+    other.height = 0;
+}
+
+template <GraphCell G>
+GenericMaze<G>& GenericMaze<G>::operator=(GenericMaze&& other) noexcept {
+    if (this != &other) {
+        if (grid) {
+            for (std::size_t row = 0; row < height; ++row) {
+                delete[] grid[row];
+            }
+            delete[] grid;
+        }
+        width = other.width;
+        height = other.height;
+        grid = other.grid;
+        other.grid = nullptr;
+        other.width = 0;
+        other.height = 0;
+    }
+    return *this;
 }
 
 template <GraphCell G>
