@@ -10,7 +10,7 @@ enum Direction {
     left, right, up, down, COUNT
 };
 
-/// @brief Return the opposite direction.
+/// @brief Return the opposite cardinal direction (left<->right, up<->down).
 inline Direction reverse(Direction dir) {
     if (dir == Direction::left) return Direction::right;
     else if (dir == Direction::right) return Direction::left;
@@ -18,10 +18,10 @@ inline Direction reverse(Direction dir) {
     else return Direction::up;
 }
 
-/// @brief ASCII glyphs for directional overlays in simple renders.
+/// @brief ASCII glyphs for directional overlays in simple text renders.
 const char DirectionGlyphs[] = {'-', '-', '|', '|'};
 
-/// @brief 2D map for storing predecessor directions.
+/// @brief 2D map storing predecessor directions used to reconstruct paths.
 struct DirectionMap {
     Direction** map;
     std::size_t width_;
