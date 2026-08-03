@@ -51,7 +51,7 @@ public:
     ~GenericMaze();
 
     /// @brief Generate a random maze from a weighted cell pool.
-    void generateRandom(std::vector<G>& cells, 
+    void generateRandom(std::vector<G>& cells,
         float wall_density = 0.3f);
     /// @brief Generate a random maze from a fixed initializer list.
     void generateRandom(std::initializer_list<G> cells,
@@ -99,7 +99,7 @@ private:
     void generate_kruskal(const G& wall, const G& passage,
         std::mt19937& rng);
 
-    void displayPath(const Path& path, Cell start, Cell dest, 
+    void displayPath(const Path& path, Cell start, Cell dest,
         const uint16_t step_ms = 100);
 };
 
